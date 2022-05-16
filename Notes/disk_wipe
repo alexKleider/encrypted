@@ -1,0 +1,33 @@
+redbook addendum:
+You know, if you want to start with a truly wiped disk format, just
+write zeroes over the first 512 bytes:
+
+#  dd if=/dev/zero /of=dev/sdb bs=512 count=1
+
+Do that, and every aspect of filesystems, partition tables, volume
+labels, etc. is just plain gone.
+
+Now, as to your 1 TB drive, I'm pretty sure it's below the size where
+/sbin/fdisk runs out of steam entirely, which I believe doesn't happen
+until you try to create a filesystem larger than 1.5 TB, _but_ you
+should, IMO, start thinking about using GNU parted instead of
+/sbin/fdisk, and maybe also GPT-type partition tables instead of the
+default IBM/Microsoft type.
+
+(I have no direct experience, as I don't own any hard drives that big.)
+Rick Moen
+
+Once you create ext3 partitions on there, use e2label to assign a name
+to the device and this will be respected in the name it's assigned when
+mounted.
+
+Rick's comments may be a better way to go, but I believe what you need
+to do in fdisk is run fdisk on the drive itself (/dev/sdb) rather than
+partitions within it (/dev/sdb1). This will allow you to delete all
+existing paritions, create new ones (and specify the right filesystem
+type - most likely ext3).
+
+Good luck!
+
+Cheers, Tom
+
